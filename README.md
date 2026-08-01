@@ -1,79 +1,86 @@
-# Azure ↔ AWS site-to-site VPN with StrongSwan (IKEv2)
+# Azure Enterprise Lab
 
-Este módulo documenta a implementação de uma VPN site-to-site entre Microsoft Azure e Amazon AWS utilizando Azure VPN Gateway e StrongSwan (Linux), com autenticação por chave pré-compartilhada (PSK), negociação IKEv2 e validação de conectividade entre redes privadas.
+Laboratório prático de arquitetura Azure focado na preparação para a certificação **AZ-104**, construído com uma abordagem orientada à engenharia: **entender antes de decorar**.
+
+Este repositório documenta a construção de uma infraestrutura Azure inspirada em ambientes enterprise, cobrindo identidade, governança, armazenamento, computação, redes, conectividade híbrida, segurança, monitoramento e automação.
 
 ## Objetivo
 
-Implementar uma arquitetura Azure Hub-and-Spoke utilizando Azure VPN Gateway como ponto de conectividade Site-to-Site com uma VPC AWS, Global VNet Peering para integração entre redes, User Defined Routing para controle do caminho do tráfego, e uma Network Virtual Appliance (NVA) como roteador de trânsito, implementando Forced Tunneling e egress centralizado por meio de NAT Gateway.
+Construir uma arquitetura Azure de forma incremental, validando cada componente por meio de testes práticos, troubleshooting e documentação técnica.
 
-## Arquitetura
+A filosofia do projeto é simples:
 
-```text
-AWS VPC (192.168.100.0/24)
-        │
-   VPN Site-to-Site
-        │
-Azure VPN Gateway
-        │
-VNet Hub (10.100.0.0/16)
-        │
-NVA (10.100.10.4)
-        │
-UDR / Transit
-        │
-VNet Core (10.10.0.0/16)
-        │
-VM Core (10.10.1.4)
-10.10.0.0/16
-```
+> **Sem enrolação. Sem pular etapas. Sempre entendendo o porquê das coisas.**
 
-## Componentes
+## Roadmap do laboratório
 
-### Azure
+A documentação está organizada em módulos numerados, seguindo uma evolução cronológica da arquitetura.
 
-* Virtual Network
-* GatewaySubnet
-* VPN Gateway
-* Local Network Gateway
-* VPN Connection
+| Módulo                  | Descrição                                                   | Status        |
+| ----------------------- | ----------------------------------------------------------- | ------------- |
+| 01 — Foundation         | Assinatura, Resource Groups e Azure CLI                     | Concluído     |
+| 02 — Identity           | Microsoft Entra ID, RBAC e grupos                           | Concluído     |
+| 03 — Governance         | Organização, tags e governança                              | Concluído     |
+| 04 — Storage            | Storage Accounts, Backup e redundância                      | Concluído     |
+| 05 — Compute            | Máquinas virtuais, discos e disponibilidade                 | Concluído     |
+| 06 — Networking         | VNets, Subnets, NSG e Global Peering                        | Concluído     |
+| **07 — Hybrid network** | **VPN Site-to-Site, Hub-and-Spoke, UDR, NVA e NAT Gateway** | **Concluído** |
+| 08 — Load balancing     | Azure Load Balancer e alta disponibilidade                  | Em andamento  |
+| 09 — Security           | Azure Firewall, Bastion e segmentação                       | Planejado     |
+| 10 — Monitoring         | Azure Monitor, Log Analytics e alertas                      | Planejado     |
+| 11 — Backup & DR        | Recovery Services Vault e continuidade                      | Planejado     |
+| 12 — Automation         | Terraform, Azure CLI e automação                            | Planejado     |
+| 13 — Final architecture | Arquitetura enterprise consolidada                          | Planejado     |
 
-### AWS
+## Arquitetura atual
 
-* VPC
-* Public Subnet
-* Internet Gateway
-* Route Table
-* EC2 Ubuntu
-* Elastic IP
+O laboratório implementa uma arquitetura **Hub-and-Spoke** com integração híbrida entre **Azure e AWS**.
 
-### Linux
+Tecnologias utilizadas:
 
-* StrongSwan
-* IKEv2
-* ESP
-* XFRM
+* Microsoft Azure
+* AWS
+* Azure VPN Gateway
+* Global VNet Peering
+* User Defined Routing (UDR)
+* Network Virtual Appliance (NVA)
+* NAT Gateway
+* Azure Bastion
+* Azure CLI
+* Bash
+* Linux (Ubuntu)
+* strongSwan
+* IPsec / IKEv2
 
-## Fluxo IKEv2
+## Estrutura da documentação
 
-1. IKE_SA_INIT
-2. IKE_AUTH
-3. CHILD_SA
-4. ESP
+A documentação detalhada encontra-se no diretório `docs/`, organizada por módulos.
 
-## Principais aprendizados
+Cada módulo contém:
 
-* funcionamento do Azure VPN Gateway;
-* negociação IKEv2;
-* troubleshooting de `NO_PROPOSAL_CHOSEN`;
-* NAT Traversal (NAT-T);
-* políticas XFRM do kernel Linux;
-* conectividade híbrida Azure ↔ AWS.
+* objetivo;
+* arquitetura;
+* implementação;
+* validação;
+* troubleshooting;
+* lições aprendidas;
+* evidências.
 
-## Resultado
+## Principais conceitos explorados
 
-Validação realizada com sucesso entre:
+* arquitetura Hub-and-Spoke;
+* conectividade híbrida Azure ↔ AWS;
+* VPN Site-to-Site;
+* roteamento entre VNets;
+* Global Peering;
+* Forced Tunneling;
+* trânsito via NVA;
+* Effective Routes;
+* Hairpin Routing;
+* troubleshooting de rede.
 
-* `In  IP 10.10.1.4.34704 > 34.160.111.145.443`
-* `Out IP 10.10.1.4.34704 > 34.160.111.145.443`
+## Autor
 
-com 0% de perda de pacotes através do túnel IPsec.
+**Manuel Fernandes Andrade**
+
+Este repositório faz parte da minha jornada de especialização em **Cloud Computing, Azure e Arquitetura de Infraestrutura**.
