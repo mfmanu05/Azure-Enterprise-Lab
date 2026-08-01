@@ -4,22 +4,26 @@ Este módulo documenta a implementação de uma VPN site-to-site entre Microsoft
 
 ## Objetivo
 
-Estabelecer comunicação segura entre:
-
-* Azure VNet: `10.10.0.0/16`
-* AWS VPC: `192.168.100.0/24`
-
-por meio de um túnel IPsec criptografado.
+Implementar uma arquitetura Azure Hub-and-Spoke utilizando Azure VPN Gateway como ponto de conectividade Site-to-Site com uma VPC AWS, Global VNet Peering para integração entre redes, User Defined Routing para controle do caminho do tráfego, e uma Network Virtual Appliance (NVA) como roteador de trânsito, implementando Forced Tunneling e egress centralizado por meio de NAT Gateway.
 
 ## Arquitetura
 
 ```text
-AWS (EC2 + StrongSwan)
-192.168.100.0/24
+AWS VPC (192.168.100.0/24)
         │
-        │ IPsec IKEv2
+   VPN Site-to-Site
         │
 Azure VPN Gateway
+        │
+VNet Hub (10.100.0.0/16)
+        │
+NVA (10.100.10.4)
+        │
+UDR / Transit
+        │
+VNet Core (10.10.0.0/16)
+        │
+VM Core (10.10.1.4)
 10.10.0.0/16
 ```
 
@@ -69,7 +73,7 @@ Azure VPN Gateway
 
 Validação realizada com sucesso entre:
 
-* `192.168.100.252`
-* `10.10.1.4`
+* `In  IP 10.10.1.4.34704 > 34.160.111.145.443`
+* `Out IP 10.10.1.4.34704 > 34.160.111.145.443`
 
 com 0% de perda de pacotes através do túnel IPsec.
