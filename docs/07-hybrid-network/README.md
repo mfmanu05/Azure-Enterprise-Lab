@@ -25,6 +25,8 @@ Diferentemente de um laboratório focado apenas em configuração, este módulo 
 
 A arquitetura foi distribuída entre duas regiões do Azure para contornar limitações de cota da assinatura e aproximar o desenho de um ambiente enterprise.
 
+
+
 ## VNet Core
 
 **Região:** Brazil South
