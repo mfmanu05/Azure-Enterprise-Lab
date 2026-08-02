@@ -195,25 +195,34 @@ O NAT Gateway deve ser validado preferencialmente com tráfego **TCP/HTTPS**.
 
 ---
 
-# Problema 6 — Bastion inacessível
+## Problema 6 — Azure Bastion inacessível
 
-## Sintoma
+### Sintoma
 
-Após alterar as rotas do Hub, o acesso ao Azure Bastion deixou de funcionar.
+Após a implantação do Azure Bastion na VNet Hub, não era possível estabelecer conexão com a VM localizada na VNet Core.
 
-## Diagnóstico
+### Hipótese inicial
 
-Uma UDR havia sido aplicada de forma ampla na VNet Hub.
+O problema poderia estar relacionado ao roteamento entre as VNets ou às UDRs aplicadas na arquitetura Hub-and-Spoke.
 
-O tráfego do Bastion passou a ser desviado para a NVA.
+### Diagnóstico
 
-## Solução
+A análise da topologia mostrou que o Azure Bastion permanecia corretamente implantado na **VNet Hub** e a conectividade entre as VNets estava funcional.
 
-Foi ajustado o escopo das UDRs, mantendo o Bastion fora do caminho de trânsito.
+O problema foi identificado nas regras do **Network Security Group (NSG) associado à subnet da VNet Core**, que bloqueava o tráfego necessário para a comunicação do Azure Bastion com a máquina virtual.
 
-## Aprendizado
+### Solução
 
-Nem todo tráfego deve ser forçado pela NVA.
+Foram adicionadas regras permitindo o tráfego proveniente do serviço **Azure Bastion**, incluindo as portas administrativas necessárias (SSH/RDP, conforme o sistema operacional).
+
+Após a atualização das regras do NSG, o acesso foi restabelecido imediatamente.
+
+### Aprendizado
+
+Em arquiteturas Hub-and-Spoke, o Azure Bastion depende tanto da conectividade entre VNets quanto das **regras de NSG da subnet onde a máquina virtual está localizada**.
+
+Um NSG restritivo pode impedir o acesso administrativo mesmo quando o peering e o roteamento estão corretamente configurados.
+.
 
 ---
 
